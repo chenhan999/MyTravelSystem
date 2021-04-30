@@ -3,7 +3,7 @@
 <mapper namespace="com.chenhan.mytravelsystem.dao.HotelMapper">
 
     <select id="getHotelInfoByName" resultType="com.chenhan.mytravelsystem.model.HotelModel">
-        select region , hotel_name as hotelName , price ,`time`, comment from nice_hotel_info
+        select region , hotel_name as hotelName , price ,`time`, comment,price_num as priceNum from nice_hotel_info
     </select>
 
 </mapper>

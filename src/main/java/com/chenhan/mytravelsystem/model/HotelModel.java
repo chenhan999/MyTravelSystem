@@ -22,5 +22,8 @@ public class HotelModel {
 
     private String comment;
 
+    private int priceNum;
+
+
 
 }
