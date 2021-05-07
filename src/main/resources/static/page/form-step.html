@@ -25,61 +25,30 @@
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label">最多游客数量</label>
-                <div class="layui-input-inline">
-                    <input type="number" name="maxTouristNum" required lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
                 <label class="layui-form-label">最少游客数量</label>
                 <div class="layui-input-inline">
                     <input type="number" name="minTouristNum" required lay-verify="required"  autocomplete="off" class="layui-input">
                 </div>
+                <label class="layui-form-label">最多游客数量</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="maxTouristNum" required lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
             </div>
 
-            <div class="layui-inline" id=ch>
+            <div class="layui-inline" id=hotel-0>
                 <label class="layui-form-label">行程一    酒店</label>
                 <div class="layui-input-inline" style="width: 800px;">
-                    <select name="hotelOne" id="hotelOne-0" lay-verify="required" style="width:1600px;" lay-search>
+                    <select name="hotelOne" id="select-0" lay-verify="required" style="width:1600px;" lay-search>
                         <option value=""></option>
                     </select>
                 </div>
                 <label class="layui-form-label">行程一    天数</label>
                 <div class="layui-input-inline">
-                    <input type="number" name="hotelOneNum" required lay-verify="required"  autocomplete="off" class="layui-input">
+                    <input type="number" id="hotelNum-0" name="hotelNum-0" required lay-verify="required"  autocomplete="off" class="layui-input">
                 </div>
                 <a href="javascript:void(0)"  id = "add" class="table-look add_column">新增栏目</a>
 
             </div>
-
-
-
-
-            <!--<div class="layui-inline">-->
-                <!--<label class="layui-form-label">行程二    酒店</label>-->
-                <!--<div class="layui-input-inline" style="width: 800px;">-->
-                    <!--<select name="hotelTwo" id="hotelTwo" lay-verify="required" style="width:1600px;" lay-search>-->
-                        <!--<option value=""></option>-->
-                    <!--</select>-->
-                <!--</div>-->
-                <!--<label class="layui-form-label">行程二    天数</label>-->
-                <!--<div class="layui-input-inline">-->
-                    <!--<input type="number" name="hotelTwoNum" required lay-verify="required"  autocomplete="off" class="layui-input">-->
-                <!--</div>-->
-            <!--</div>-->
-
-
-            <!--<div class="layui-inline">-->
-                <!--<label class="layui-form-label">行程三    酒店</label>-->
-                <!--<div class="layui-input-inline" style="width: 800px;">-->
-                    <!--<select name="hotelThree" id="hotelThree" lay-verify="required" style="width:1600px;" lay-search>-->
-                        <!--<option value=""></option>-->
-                    <!--</select>-->
-                <!--</div>-->
-                <!--<label class="layui-form-label">行程三    天数</label>-->
-                <!--<div class="layui-input-inline">-->
-                    <!--<input type="number" name="hotelThreeNum" required lay-verify="required"  autocomplete="off" class="layui-input">-->
-                <!--</div>-->
-            <!--</div>-->
-
 
             <div class="layui-form-item" style="display: flex;flex-wrap: wrap;justify-content: space-evenly;">
                 <button class="layui-btn" lay-submit lay-filter="submit">提交</button>
@@ -108,18 +77,24 @@
 
         //监听提交事件
         form.on('submit(submit)', function(data){
+
+
             getval()
-
-            //获取请求数据
-            console.log( data.field);
-            data.add("list",array)
-            console.log( data.field);
-
             //使用ajax发送请求
             $.ajax({
-                url:"/ajaxtest",
+                url:"/submit",
                 type:"post",
-                data:data.field,
+                traditional: true,
+                // dataType: "json",
+                // contentType:"application/json",
+                data : {
+                    departureTime :data.field.departureTime,
+                    maxTouristNum :data.field.maxTouristNum,
+                    minTouristNum :data.field.minTouristNum,
+                    list: JSON.stringify(array),
+                    dayNumList: JSON.stringify(dayNumArray),
+
+                },
                 success:function(callback){
 
                     layer.open({
@@ -146,9 +121,7 @@
                 url: "/getHotelName",
                 success: function (data) {
                     $.each(data, function (index, item) {
-                        $("#hotelOne-0").append(new Option(item));
-                        // $("#hotelTwo").append(new Option(item));
-                        // $("#hotelThree").append(new Option(item));
+                        $("#select-0").append(new Option(item));
                     });
                     layui.form.render("select");
                 },error: function () {
@@ -160,37 +133,48 @@
 
         var i =1;
         var array = [];
+        var dayNumArray = [];
         function getval() {
+
+            array.splice(0,array.length);//清空数组
+            dayNumArray.splice(0,dayNumArray.length);//清空数组
             for(var j=0; j<i; j++ ){
-                debugger;
-                var q = '#hotelOne-'+ j
-                console.log(q)
+                var q = '#select-'+ j
                 var d =  document.querySelector(q).value;
-                console.log(d);
                 array.push(d);
-                console.log(array);
+
+                var num = $("#hotelNum-"+j)[0].value
+                dayNumArray.push(num)
             }
-            debugger;
-            console.log(array);
-            return array;
+            console.log(dayNumArray)
         }
-        //新增按钮  复制div
-        $(document).on('click','#add',function(){
 
-            var sourceNode = document.getElementById("ch"); // 获得被克隆的节点对象
-            var clonedNode = sourceNode.cloneNode(true); // 克隆节点
-            clonedNode.setAttribute("id", "hotelOne-" + i); // 修改一下id 值，避免id 重复
-            sourceNode.parentNode.appendChild(clonedNode); // 在父节点插入克隆的节点
-            clonedNode.children[1].children
-            //新增的select加载值
-            layui.form.render("select");
 
-            i=i+1;
+        $(function () {
+            //新增按钮  复制div
+            $(document).on('click','#add',function(){
 
-        });
+                var sourceNode = document.getElementById("hotel-0"); // 获得被克隆的节点对象
+                var clonedNode = sourceNode.cloneNode(true); // 克隆节点
+                clonedNode.setAttribute("id", "hotel-" + i); // 修改一下id 值，避免id 重复
+                sourceNode.parentNode.appendChild(clonedNode); // 在父节点插入克隆的节点
+                //select 的id也自增
+                $("#hotel-" + i)[0].children[1].children[0].setAttribute("id","select-"+i)
+                //天数也自增
+                $("#hotel-" + i)[0].children[3].children[0].setAttribute("id","hotelNum-"+i);
+                $("#hotelNum-"+i)[0].value=1;
+                //新增的select加载值
+                layui.form.render("select");
 
+                i=i+1;
+
+            });
+        })
 
     });
+
+
+
 </script>
 
 </body>

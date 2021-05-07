@@ -34,28 +34,31 @@ public class testController {
     }
 
 
-    @PostMapping(value = "ajaxtest" ,produces ="text/html; charset=UTF-8")
+    @PostMapping(value = "submit" ,produces ="text/html; charset=UTF-8")
     @ResponseBody
     public String test(NiceSubmitModel niceSubmitModel) throws UnsupportedEncodingException {
 
+        if(niceSubmitModel.getMinTouristNum()>niceSubmitModel.getMaxTouristNum()){
+            return "王雅君 @.@ 认真工作,你家最少人数比最多人数多蛮";
+        }
+
         StringBuffer stringBuffer = new StringBuffer();
 
-        //拼接行程一
-        String[] split = niceSubmitModel.getHotelOne().split(";");
+        List<String> dayNumList = niceSubmitModel.getDayNumList();
+
         stringBuffer.append("出发时间：").append(niceSubmitModel.getDepartureTime());
-        stringBuffer.append("<br>").append("游客数量：").append(niceSubmitModel.getMaxTouristNum());
-        stringBuffer.append("<br>").append("房：<br>   ").append(split[0]).append("  ").append(split[1]).append("    ").append(split[3]).append("元/间").append("*").append(niceSubmitModel.getHotelOneNum()).append("晚     ").append(split[4]);
+        stringBuffer.append("<br>").append("游客数量：").append(niceSubmitModel.getMinTouristNum()).append("~").append(niceSubmitModel.getMaxTouristNum());
+        stringBuffer.append("<br>").append("房：<br>   ");
+        List<String> list = niceSubmitModel.getList();
+        for (int i = 0; i < list.size(); i++) {
+            String hotleStr = list.get(i);
+            String replace = hotleStr.replace("[" , "").replace("]" , "").replace("\"" , "");
 
-        //拼接行程二
-
-        String[] split2 = niceSubmitModel.getHotelTwo().split(";");
-        stringBuffer.append("<br>").append("       ").append(split2[0]).append("  ").append(split2[1]).append("    ").append(split2[3]).append("元/间").append("*").append(niceSubmitModel.getHotelTwoNum()).append("晚     ").append(split[4]);
-
-        //拼接行程三
-
-        String[] split3 = niceSubmitModel.getHotelThree().split(";");
-        stringBuffer.append("<br>").append("       ").append(split3[0]).append("  ").append(split3[1]).append("    ").append(split3[3]).append("元/间").append("*").append(niceSubmitModel.getHotelThreeNum()).append("晚     ").append(split[4]);
-
+            String dayNum = dayNumList.get(i);
+            String numReplace = dayNum.replace("[" , "").replace("]" , "").replace("\"" , "");
+            String[] split = replace.split(";");
+            stringBuffer.append(split[0]).append(" &nbsp &nbsp &nbsp").append(split[1]).append(" &nbsp;&nbsp;&nbsp; ").append(split[3]).append("元/间&nbsp;&nbsp;").append("*&nbsp;&nbsp;").append(numReplace).append("晚&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(split[4]).append("<br>");
+        }
 
 
         //拼接 车费
@@ -71,7 +74,7 @@ public class testController {
 
     @PostMapping("getHotelName")
     @ResponseBody
-    public List<String> getHotelName(String name) {
+    public List<String> getHotelName() {
         List<HotelModel> hotelInfoByName = hotelService.getHotelInfoByName();
         ArrayList<String> strings = new ArrayList<>();
         for (HotelModel hotelModel : hotelInfoByName) {

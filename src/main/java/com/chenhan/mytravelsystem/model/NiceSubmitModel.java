@@ -2,6 +2,8 @@ package com.chenhan.mytravelsystem.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Description:
  * @Author Han HA Chen
@@ -9,6 +11,8 @@ import lombok.Data;
  **/
 @Data
 public class NiceSubmitModel {
+
+
 
     //出行时间
     private String departureTime;
@@ -19,21 +23,11 @@ public class NiceSubmitModel {
     //最少游客数量
     private int minTouristNum;
 
+    //hotelList
+    private List<String> list;
 
-
-    //行程段 酒店信息
-    private String hotelOne;
-
-    private String hotelTwo;
-
-    private String hotelThree;
-
-    //行程段天数
-    private int hotelOneNum;
-
-    private int hotelTwoNum;
-
-    private int hotelThreeNum;
+    //Hotel Day Num
+    private List<String> dayNumList;
 
 
 }
